@@ -1,15 +1,9 @@
 const Queue = require('bull');
+const path = require('path');
 
 const Task = new Queue('common', {
     redis: {
-        password: process.env.REDIS_PASS,
-        options: {
-            maxRetriesPerRequest: 5,
-            reconnectOnError(err) {
-                console.log(err);
-                return true
-            }
-        }
+        host: 'localhost',
     },
     limiter: {
         max: 30,
@@ -25,7 +19,23 @@ const Task = new Queue('common', {
 });
 
 Task.process('job', () => {
-    console.log('job done');
+    console.log('normal job done');
+});
+
+Task.process('fileJob', 5, path.resolve(__dirname, 'processes/test'));
+
+const timeOut = async () => {
+    return await Promise(resolve => {
+        setTimeout(() => {
+            console.log('timeout');
+            resolve(1)
+        }, 5000);
+    })
+}
+Task.process('asyncJob', async () => {
+    console.log('async job start')
+    await timeOut()
+    console.log('async job done');
 });
 
 Task.on('error', (err) => {
