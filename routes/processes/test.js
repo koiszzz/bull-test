@@ -7,8 +7,8 @@ const timeOut = async () => {
     })
 }
 module.exports = async (job, done) => {
-    console.log('file job start ');
+    console.log(job.id + 'file job start ');
     await timeOut();
-    console.log('file job done')
+    console.log(job.id + 'file job done')
     done();
 }

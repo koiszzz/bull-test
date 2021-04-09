@@ -18,24 +18,24 @@ const Task = new Queue('common', {
     }
 });
 
-Task.process('job', () => {
-    console.log('normal job done');
+Task.process('job', (job) => {
+    console.log(job.id + 'normal job done');
+
 });
 
-Task.process('fileJob', 5, path.resolve(__dirname, 'processes/test'));
+Task.process('fileJob', path.resolve(__dirname, 'processes/test'));
 
 const timeOut = async () => {
-    return await Promise(resolve => {
+    return await new Promise(resolve => {
         setTimeout(() => {
-            console.log('timeout');
             resolve(1)
         }, 5000);
     })
 }
-Task.process('asyncJob', async () => {
-    console.log('async job start')
+Task.process('asyncJob', async (job) => {
+    console.log(job.id + 'async job start')
     await timeOut()
-    console.log('async job done');
+    console.log(job.id + 'async job done');
 });
 
 Task.on('error', (err) => {
