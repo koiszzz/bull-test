@@ -18,6 +18,9 @@ router.get('/add', async (req, res, next) => {
         const job3 = await Task.add('fileJob', {data: 1}, {
             removeOnComplete: true,
         });
+        const job4 = await Task.add('childJob', {data: 1}, {
+            removeOnComplete: true
+        })
         res.json({
             list: await Task.getJobs(['delayed', 'active', 'waiting', 'paused', 'stuck']),
             job,
