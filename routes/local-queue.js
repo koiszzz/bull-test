@@ -23,8 +23,13 @@ Task.process('job', 1,(job) => {
 
 });
 
-Task.process('fileJob', 1, path.resolve(__dirname, 'processes/test'));
-Task.process('childJob', 1, path.resolve(__dirname, 'processes/childJob'));
+// Task.process('fileJob', 1, path.resolve(__dirname, 'processes/test'));
+Task.process('childJob', 1, async () => {
+    console.log('childJob start');
+    await timeOut();
+    await Task.add('job', {job: 1}, {removeOnComplete: true});
+    console.log('childJob done');
+});
 
 const timeOut = async () => {
     return await new Promise(resolve => {
@@ -33,14 +38,16 @@ const timeOut = async () => {
         }, 5000);
     })
 }
-Task.process('asyncJob', 1, async (job) => {
-    console.log(job.id + 'async job start')
-    await timeOut()
-    console.log(job.id + 'async job done');
-});
+// Task.process('asyncJob', 1, async (job) => {
+//     console.log(job.id + 'async job start')
+//     await timeOut()
+//     console.log(job.id + 'async job done');
+// });
 
 Task.on('error', (err) => {
     console.log(err);
 });
+
+console.log('****** load bull task ******')
 
 module.exports = Task;
