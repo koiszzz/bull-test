@@ -1,4 +1,4 @@
-const {Worker, FlowProducer, Queue} = require('bullmq')
+const {Worker, FlowProducer, Queue, QueueScheduler } = require('bullmq')
 
 const worker1 = new Worker('test1', async job => {
     console.log(job.name + job.id + ' log 1');
@@ -22,6 +22,7 @@ const worker3 = new Worker('test3', async job => {
         }
     }
 });
+const queueScheduler  = new QueueScheduler('test3');
 worker3.on('failed', (job, error) => {
     console.log(`${job.name} # ${job.id} failed`);
 });
@@ -31,9 +32,7 @@ worker3.on('drained', async () => {
     console.log('delayed jobs: ' + delayed.map(j => j.id).join(','));
 });
 const flowPro = new FlowProducer();
-const queue3 = new Queue('test3', {
-
-});
+const queue3 = new Queue('test3', {});
 
 (async () => {
     // await flowPro.add({
